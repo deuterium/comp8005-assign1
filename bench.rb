@@ -4,7 +4,6 @@
 #Use multiple processes and threads on either the Windows or Linux operating systems and measure the performance and efficiency of each mechanism.
 
 require 'prime'
-require 'thread'
 
 ##global variables
 @num_workers = 5
