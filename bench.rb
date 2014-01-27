@@ -6,10 +6,8 @@
 require 'prime'
 require 'thread'
 
-#global variables
-usage = "Proper usage: ./bench [t|p] \nt runs just threads, p runs just processes"
+##global variables
 @num_workers = 5
-@lock = Mutex.new
 
 #functions
 def timeNow
@@ -62,7 +60,7 @@ end
 #program main
 #parse command line variables
 if ARGV.count > 1
-	puts usage
+	puts "Proper usage: ./bench [t|p] \nt runs just threads, p runs just processes"
 	exit
 elsif ARGV[0].eql? 't'
 	makePrimers
