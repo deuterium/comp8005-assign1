@@ -46,23 +46,7 @@ def benchThreads
 	#wait for each thread to finish before continuing
 	threads.each {|t| t.join}
 
-	puts "Completed thread benchmarking at #{timeNow}"
-end
-
-#55 = thread, 33 = process
-def doWork(type, prime)
-	puts Thread.current['prime']
-	if type == 55
-		info "#{Thread.current} starting at #{timeNow}"
-		#Prime.prime_division(prime)
-		#sleep(rand(3..10))
-		info "#{Thread.current} end at #{timeNow}"
-	elsif type == 33
-
-	else
-		info "should not get here!!! exiting"
-		exit
-	end	
+	info "Completed thread benchmarking at #{timeNow}"
 end
 
 #generate large numbers for primes to be found
