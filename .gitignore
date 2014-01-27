@@ -12,7 +12,7 @@ test/tmp
 test/version_tmp
 tmp
 *~
-bench_log
+bench_log*
 
 # YARD artifacts
 .yardoc

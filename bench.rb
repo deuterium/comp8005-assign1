@@ -4,6 +4,7 @@
 #Use multiple processes and threads on either the Windows or Linux operating systems and measure the performance and efficiency of each mechanism.
 
 require 'prime'
+require 'benchmark'
 
 ##global variables
 @num_workers = 5
@@ -77,7 +78,8 @@ end
 #program main
 #parse command line variables
 if ARGV.count > 1
-	puts "Proper usage: ./bench [t|p] \nt runs just threads, p runs just processes"
+	puts "Proper usage: ./bench [t|p|b] \nt runs just threads
+    , p runs just processes\nb run ruby cpu benchmarking"
 	exit
 elsif ARGV[0].eql? 't'
 	makePrimers
@@ -87,6 +89,14 @@ elsif ARGV[0].eql? 'p'
 	makePrimers
 	ARGV.clear
 	benchProcesses
+elsif ARGV[0].eql? 'b'
+  makePrimers
+  ARGV.clear
+  File.open("bench_log_ruby", 'a') { |f| 
+    f.write ("Process ++ #{Benchmark.measure{benchProcesses}} \n") }
+  
+  File.open("bench_log_ruby", 'a') { |f| 
+    f.write ("Thread ++ #{Benchmark.measure{benchThreads}} \n") }
 else 
 	makePrimers
 	ARGV.clear
