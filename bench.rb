@@ -9,7 +9,7 @@ require 'thread'
 #global variables
 usage = "Proper usage: ./bench [t|p]"
 @num_workers = 5
-
+@lock = Mutex.new
 
 #functions
 def timeNow
@@ -32,43 +32,57 @@ end
 
 def benchThreads
 	info "Starting thread benchmarking at #{timeNow}"
-	threads = Array.new(@num_workers)
-	info "Starting total of #{@num_workers} threads at #{timeNow}"
-	for i in 0..@num_workers
-		threads[i] = Thread.new{ doWork(i,55) }
+
+	threads = (1..@num_workers).map do |t|
+		Thread.new(t) do |t|
+			puts @prime_me[t-1]
+			info "#{Thread.current} starting at #{timeNow}"
+			#Prime.prime_division(prime)
+			#sleep(rand(3..10))
+			
+			info "#{Thread.current} end at #{timeNow}"
+		end
 	end
+
 	#wait for each thread to finish before continuing
-	for i in 0..@num_workers
-		threads[i].join
-	end
+	threads.each {|t| t.join}
+
+	
 	
 	puts "Completed thread benchmarking at #{timeNow}"
 end
 
 #55 = thread, 33 = process
-def doWork(id, type)
+def doWork(type, prime)
+	puts Thread.current['prime']
 	if type == 55
 		info "#{Thread.current} starting at #{timeNow}"
-		#Prime.prime_division(22)
-		sleep(rand(3..10))
+		#Prime.prime_division(prime)
+		#sleep(rand(3..10))
 		info "#{Thread.current} end at #{timeNow}"
 	elsif type == 33
 
 	else
-		info "should get here!!!"
+		info "should not get here!!! exiting"
 		exit
 	end	
 end
 
 #program main
+#generate large numbers for primes to be found
+@prime_me = (1..@num_workers).map do |i|
+	i = rand(9000000..9999999999)
+end
+
+#parse command line variables
 if ARGV.count > 1 || ARGV.empty?
 	puts usage
 	exit
 elsif ARGV[0].eql? 't'
-	# run threads
+	ARGV.clear #clear input buffer (argv counts in ruby)
 	benchThreads
 elsif ARGV[0].eql? 'p'
-	# run process
+	ARGV.clear
 	benchProcesses
 else 
 	puts usage
