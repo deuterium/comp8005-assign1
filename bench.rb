@@ -7,7 +7,7 @@ require 'prime'
 require 'thread'
 
 #global variables
-usage = "Proper usage: ./bench [t|p]"
+usage = "Proper usage: ./bench [t|p] \nt runs just threads, p runs just processes"
 @num_workers = 5
 @lock = Mutex.new
 
@@ -35,11 +35,10 @@ def benchThreads
 
 	threads = (1..@num_workers).map do |t|
 		Thread.new(t) do |t|
-			puts @prime_me[t-1]
+
 			info "#{Thread.current} starting at #{timeNow}"
-			#Prime.prime_division(prime)
-			#sleep(rand(3..10))
-			
+			info "#{Thread.current} #{Prime.prime_division(@prime_me[t-1])}"
+			#sleep(rand(3..10)) #debugging for threads
 			info "#{Thread.current} end at #{timeNow}"
 		end
 	end
@@ -47,8 +46,6 @@ def benchThreads
 	#wait for each thread to finish before continuing
 	threads.each {|t| t.join}
 
-	
-	
 	puts "Completed thread benchmarking at #{timeNow}"
 end
 
@@ -68,22 +65,32 @@ def doWork(type, prime)
 	end	
 end
 
-#program main
 #generate large numbers for primes to be found
+def makePrimers
 @prime_me = (1..@num_workers).map do |i|
-	i = rand(9000000..9999999999)
+	i = rand(9000000000000..9999999999999999)
 end
 
+info "Generated numbers to be primed:"
+@prime_me.each {|p| info p}
+end
+
+#program main
 #parse command line variables
-if ARGV.count > 1 || ARGV.empty?
+if ARGV.count > 1
 	puts usage
 	exit
 elsif ARGV[0].eql? 't'
+	makePrimers
 	ARGV.clear #clear input buffer (argv counts in ruby)
 	benchThreads
 elsif ARGV[0].eql? 'p'
+	makePrimers
 	ARGV.clear
 	benchProcesses
 else 
-	puts usage
+	makePrimers
+	ARGV.clear
+	benchProcesses
+	benchThreads
 end
