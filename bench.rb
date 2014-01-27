@@ -9,31 +9,34 @@ require 'thread'
 ##global variables
 @num_workers = 5
 
-#functions
+##functions
+#Returns the system time (long format YYYY-MM-DD HH:MM:SS -GMT_DISPLACEMENT)
 def timeNow
 	return "#{Time.now}"
 end
 
+#info function - logs to file and verbose to STDOUT
+#definitely not thread safe but shouldn't matter as long as 
+#multiple file handles can be open to append to file
 def info(msg)
 	File.open("bench_log", 'a') { |f| f.write ("#{msg} \n") }
 	puts msg
 end
 
+#benchmarks multiprocessing: 5 proccess calculating primes from the pregenerated
+#numbers in makePrimers(). 
 def benchProcesses
-	info "#{@num_workers} processes"
-	pids = Array.new(@num_workers)
-	for i in 0..@num_workers
-		pids[i] = i
-	end
-	puts pids
+	#TODO
 end
 
+#benchmarks multithreading: 5 threads calculating primes from the pregenerated
+#numbers in makePrimers(). 
 def benchThreads
 	info "Starting thread benchmarking at #{timeNow}"
 
+	#make 5 threads and do hard math in each (calc primes)
 	threads = (1..@num_workers).map do |t|
 		Thread.new(t) do |t|
-
 			info "#{Thread.current} starting at #{timeNow}"
 			info "#{Thread.current} #{Prime.prime_division(@prime_me[t-1])}"
 			#sleep(rand(3..10)) #debugging for threads
@@ -43,13 +46,15 @@ def benchThreads
 
 	#wait for each thread to finish before continuing
 	threads.each {|t| t.join}
-
 	info "Completed thread benchmarking at #{timeNow}"
 end
 
-#generate large numbers for primes to be found
+#generate large numbers for primes to be found (commonly used if both
+#tests are run sequencially (no cmdline arguments))
 def makePrimers
 @prime_me = (1..@num_workers).map do |i|
+	#smaller of the large numbers that actually take time to calculate
+	#on my i5-2500k
 	i = rand(9000000000000..9999999999999999)
 end
 
