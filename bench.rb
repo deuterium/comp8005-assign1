@@ -26,7 +26,18 @@ end
 #benchmarks multiprocessing: 5 proccess calculating primes from the pregenerated
 #numbers in makePrimers(). 
 def benchProcesses
-	#TODO
+	info "Starting process benchmarking at #{timeNow}"
+
+	processes = (1..@num_workers).map do |p|
+		Process.fork do 
+			info "pid:#{Process.pid} starting at #{timeNow}"
+			info "pid:#{Process.pid} #{Prime.prime_division(@prime_me[p-1])}"
+			info "pid:#{Process.pid} end at #{timeNow}"
+		end
+	end
+	#don't leave carl in the house - no zombies
+	processes.each {|p| Process.wait p}
+	info "Completed process benchmarking at #{timeNow}"
 end
 
 #benchmarks multithreading: 5 threads calculating primes from the pregenerated
