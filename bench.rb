@@ -21,6 +21,7 @@ end
 def info(msg)
 	File.open("bench_log", 'a') { |f| f.write ("#{msg} \n") }
 	puts msg
+	STDOUT.flush
 end
 
 #benchmarks multiprocessing: 5 proccess calculating primes from the pregenerated
@@ -31,7 +32,7 @@ def benchProcesses
 	processes = (1..@num_workers).map do |p|
 		Process.fork do 
 			info "pid:#{Process.pid} starting at #{timeNow}"
-			info "pid:#{Process.pid} #{Prime.prime_division(@prime_me[p-1])}"
+			info "pid:#{Process.pid} #{@prime_me[p-1]}: #{Prime.prime_division(@prime_me[p-1])}"
 			info "pid:#{Process.pid} end at #{timeNow}"
 		end
 	end
@@ -49,7 +50,7 @@ def benchThreads
 	threads = (1..@num_workers).map do |t|
 		Thread.new(t) do |t|
 			info "#{Thread.current} starting at #{timeNow}"
-			info "#{Thread.current} #{Prime.prime_division(@prime_me[t-1])}"
+			info "#{Thread.current} #{@prime_me[t-1]}: #{Prime.prime_division(@prime_me[t-1])}"
 			#sleep(rand(3..10)) #debugging for threads
 			info "#{Thread.current} end at #{timeNow}"
 		end
@@ -66,9 +67,10 @@ def makePrimers
 @prime_me = (1..@num_workers).map do |i|
 	#smaller of the large numbers that actually take time to calculate
 	#on my i5-2500k
-	i = rand(9000000000000..9999999999999999)
+	i = rand(90000000000000..99999999999999999)
 end
-
+info "Starting Process vs Thread Benchmarking at #{timeNow}"
+info "===================================================================="
 info "Generated numbers to be primed:"
 @prime_me.each {|p| info p}
 end
@@ -90,5 +92,8 @@ else
 	makePrimers
 	ARGV.clear
 	benchProcesses
+	info "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 	benchThreads
+	info "Completed Process vs Thread Benchmarking at #{timeNow}"
+	info "====================================================================="
 end
