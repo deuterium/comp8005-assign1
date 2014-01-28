@@ -15,6 +15,11 @@ def timeNow
 	return "#{Time.now}"
 end
 
+#Gets linux memory ussage of a process
+def get_memory_usage
+  `ps -o rss= -p #{Process.pid}`.to_i
+end
+
 #info function - logs to file and verbose to STDOUT
 #definitely not thread safe but shouldn't matter as long as 
 #multiple file handles can be open to append to file
